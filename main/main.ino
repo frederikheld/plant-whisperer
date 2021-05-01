@@ -1,18 +1,18 @@
 /* CONFIG */
 
-// CO2 sensor:
-const int CO2_SENSOR_RANGE = 5000; // Messbereich des Sensors (steht im Datenblatt)
-const int CO2_PPM_THRESHOLD = 3000; // ab welchem PPM-Wert ist die Pflanze stark genug "beatmet"
-
-// Microphone:
-const int MIC_LOUDNESS_THRESHOLD = 1; // mic sensitivity
-const int MIC_TIME_THRESHOLD = 1000; // wie lang in der Vergangenheit gilt es noch als gesprochen
-const int MIC_READINGS_BUFFER_SIZE = 10; // über wie viele Messwerte wird gemittelt? Wird bei > 30 instabil!
-const int MIC_LOUDNESS_BUFFER_SIZE = 30;
-
 // Pins:
 const int PIN_MIC_IN = A0;
 const int PIN_CO2_IN = 4;
+
+// CO2 sensor:
+const int CO2_SENSOR_RANGE = 5000; // measuring range of the MHZ19 family CO2 sensor --> see data sheet!
+const int CO2_PPM_THRESHOLD = 3000; // which CO2 PPM value is considered as enough for the plant to be happy?
+const int CO2_READINGS_BUFFER_SIZE = 10;
+
+// Microphone:
+const int MIC_LOUDNESS_THRESHOLD = 1; // above this threshold, microphone readings are considered as "someone is speaking"
+const int MIC_READINGS_BUFFER_SIZE = 10; // warning: will become unstable > 30!
+const int MIC_LOUDNESS_BUFFER_SIZE = 30;
 
 // Scheduler timings:
 const int CO2_READING_INTERVAL = 2000;
