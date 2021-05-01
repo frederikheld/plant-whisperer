@@ -1,3 +1,7 @@
+/**
+ * NOTE: this is work in progress and I didn't finish it yet as I found a way to get the PWM approach working without interfering with the mic.
+ */
+
 // Includes:
 #include "MHZ19.h"
 #include <SoftwareSerial.h>
