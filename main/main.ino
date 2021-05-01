@@ -2,7 +2,7 @@
 
 // CO2 sensor:
 const int CO2_SENSOR_RANGE = 5000; // Messbereich des Sensors (steht im Datenblatt)
-const int CO2_PPM_THRESHOLD = 4000; // ab welchem PPM-Wert ist die Pflanze stark genug "beatmet"
+const int CO2_PPM_THRESHOLD = 3000; // ab welchem PPM-Wert ist die Pflanze stark genug "beatmet"
 
 // Microphone:
 const int MIC_LOUDNESS_THRESHOLD = 1; // mic sensitivity
