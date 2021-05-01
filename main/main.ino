@@ -54,6 +54,20 @@ int getCo2PPMValue() {
   
   int average = bufferCo2PPM(co2PPM);
 
+  float slope =  (float) co2PPM / (float) average; // if > 0: value is rising, if < 0: value is falling
+  // CONTINUE HERE! How do I store this without making it a global? --> functions need refactoring!
+
+  /*
+  // debug slope detection:
+  Serial.print("co2PPM:");
+  Serial.print(co2PPM);
+  Serial.print(",co2PPMAverage:");
+  Serial.print(average);
+  Serial.print(",slope:");
+  Serial.print(slope);
+  Serial.println();  
+  */
+  
   return average;
 }
 
@@ -62,6 +76,7 @@ int bufferCo2PPM(int co2PPM) {
   // write value to buffer at current index:
   co2PPMBuffer[co2PPMBufferIndex] = co2PPM;
 
+  /*
   // debug buffer contents:
   Serial.print("co2PPMBuffer: [ ");
   for (int i = 0; i < CO2_PPM_BUFFER_SIZE; i++) {
@@ -71,6 +86,7 @@ int bufferCo2PPM(int co2PPM) {
     Serial.print(" ");
   }
   Serial.println("]");
+  */
   
   // move index (circular buffer: if index is out of buffer size, start at 0):
   if (co2PPMBufferIndex >= CO2_PPM_BUFFER_SIZE - 1) {
@@ -87,12 +103,14 @@ int bufferCo2PPM(int co2PPM) {
 
   int average = sum / CO2_PPM_BUFFER_SIZE;
 
+  /*
   // to debug CO2 buffering:
   Serial.print("co2Sum:");
   Serial.print(sum);
   Serial.print(",co2Average:");
   Serial.print(average);
   Serial.println();
+  */
 
   return average;
 }
@@ -258,7 +276,6 @@ void loop() {
   Serial.print(progress);
   Serial.println();
   */
-  
   
   delay(1);
 }
