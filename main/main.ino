@@ -45,15 +45,11 @@ int progress = 0;
  * Returns the current CO2 value in PPM.
  */
 int getCo2PPMValue() {
-  
   unsigned long co2PulseLength = pulseIn(PIN_CO2_IN, HIGH, 2500000);
-
   float co2Percent = (co2PulseLength / 1000) / 1004.0;
-
   int co2PPM = co2Percent * CO2_SENSOR_RANGE;
 
   return co2PPM;
-  
 }
 
 /**
@@ -128,11 +124,32 @@ int bufferMicLoudness(int micLoudness) {
  *   * buffered to filter out noise
  */
 int getMicLoudness() {
-  const int micValue = analogRead(PIN_MIC_IN);
-  int readingsAverage = bufferMicReadings(micValue);
-  int micLoudness = abs(readingsAverage - micValue);
+  const int micValueRaw = analogRead(PIN_MIC_IN);
+  int readingsAverage = bufferMicReadings(micValueRaw);
+
+  /*
+  // to debug readings buffering:
+  Serial.print("micRaw:");
+  Serial.print(micValueRaw);
+  Serial.print(",");
+  Serial.print("micFiltered:");
+  Serial.print(readingsAverage);
+  Serial.println();
+  */  
   
+  int micLoudness = abs(readingsAverage - micValueRaw);
   int micLoudnessAverage = bufferMicLoudness(micLoudness);
+
+  /*
+  // to debug loudness buffering:
+  Serial.print("loudness:");
+  Serial.print(micLoudness);
+  Serial.print(",");
+  Serial.print("loudnessBuffered:");
+  Serial.print(micLoudnessAverage);
+  Serial.println();
+  */
+
   return micLoudnessAverage;
 }
 
@@ -189,7 +206,13 @@ void loop() {
   if (co2LevelIsReached && someoneIsSpeaking) {
     progress++;
   }
-  Serial.println(progress);
+
+  /*
+  // to debug progress:
+  Serial.print("progress:");
+  Serial.print(progress);
+  Serial.println();
+  */
   
   
   delay(1);
