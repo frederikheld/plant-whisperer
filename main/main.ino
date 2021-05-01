@@ -8,14 +8,14 @@ const int PIN_CO2_IN = 4;
 const int CO2_SENSOR_RANGE = 5000; // measuring range of the MHZ19 family CO2 sensor --> see data sheet!
 const float CO2_SENSOR_PULSE_SCALING_FACTOR = 1004.0; // scaling factor for CO2 sensor readings --> see data sheet!
 const int CO2_PPM_THRESHOLD = 3000; // which CO2 PPM value is considered as enough for the plant to be happy?
-const int CO2_READINGS_BUFFER_SIZE = 10;
+const int CO2_PPM_BUFFER_SIZE = 5;
 
 // Microphone:
 const int MIC_LOUDNESS_THRESHOLD = 1; // above this threshold, microphone readings are considered as "someone is speaking"
 const int MIC_READINGS_BUFFER_SIZE = 10;
 const int MIC_LOUDNESS_BUFFER_SIZE = 30;
 
-// Scheduler timings:
+// Scheduler timings (in milliseconds):
 const int CO2_READING_INTERVAL = 2000;
 const int MIC_READING_INTERVAL = 10;
 
@@ -31,6 +31,8 @@ int micReadingsBuffer[MIC_READINGS_BUFFER_SIZE];
 int micReadingsBufferIndex = 0;
 int micLoudnessBuffer[MIC_LOUDNESS_BUFFER_SIZE];
 int micLoudnessBufferIndex = 0;
+int co2PPMBuffer[CO2_PPM_BUFFER_SIZE];
+int co2PPMBufferIndex = 0;
 
 // Triggers:
 bool co2LevelIsReached = false;
@@ -49,8 +51,50 @@ int getCo2PPMValue() {
   unsigned long co2PulseLength = pulseIn(PIN_CO2_IN, HIGH, 2500000);
   float co2Percent = (co2PulseLength / 1000) / CO2_SENSOR_PULSE_SCALING_FACTOR;
   int co2PPM = co2Percent * CO2_SENSOR_RANGE;
+  
+  int average = bufferCo2PPM(co2PPM);
 
-  return co2PPM;
+  return average;
+}
+
+int bufferCo2PPM(int co2PPM) {
+  
+  // write value to buffer at current index:
+  co2PPMBuffer[co2PPMBufferIndex] = co2PPM;
+
+  // debug buffer contents:
+  Serial.print("co2PPMBuffer: [ ");
+  for (int i = 0; i < CO2_PPM_BUFFER_SIZE; i++) {
+    if (i == co2PPMBufferIndex) Serial.print(">");
+    Serial.print(co2PPMBuffer[i]);
+    if (i == co2PPMBufferIndex) Serial.print("<");
+    Serial.print(" ");
+  }
+  Serial.println("]");
+  
+  // move index (circular buffer: if index is out of buffer size, start at 0):
+  if (co2PPMBufferIndex >= CO2_PPM_BUFFER_SIZE - 1) {
+    co2PPMBufferIndex = 0;
+  } else {
+    co2PPMBufferIndex++;
+  }
+
+  // calculate average over buffer:
+  long int sum = 0;
+  for (int i = 0; i < CO2_PPM_BUFFER_SIZE; i++) {
+    sum += co2PPMBuffer[i];
+  }
+
+  int average = sum / CO2_PPM_BUFFER_SIZE;
+
+  // to debug CO2 buffering:
+  Serial.print("co2Sum:");
+  Serial.print(sum);
+  Serial.print(",co2Average:");
+  Serial.print(average);
+  Serial.println();
+
+  return average;
 }
 
 /**
