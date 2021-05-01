@@ -6,12 +6,13 @@ const int PIN_CO2_IN = 4;
 
 // CO2 sensor:
 const int CO2_SENSOR_RANGE = 5000; // measuring range of the MHZ19 family CO2 sensor --> see data sheet!
+const float CO2_SENSOR_PULSE_SCALING_FACTOR = 1004.0; // scaling factor for CO2 sensor readings --> see data sheet!
 const int CO2_PPM_THRESHOLD = 3000; // which CO2 PPM value is considered as enough for the plant to be happy?
 const int CO2_READINGS_BUFFER_SIZE = 10;
 
 // Microphone:
 const int MIC_LOUDNESS_THRESHOLD = 1; // above this threshold, microphone readings are considered as "someone is speaking"
-const int MIC_READINGS_BUFFER_SIZE = 10; // warning: will become unstable > 30!
+const int MIC_READINGS_BUFFER_SIZE = 10;
 const int MIC_LOUDNESS_BUFFER_SIZE = 30;
 
 // Scheduler timings:
@@ -46,7 +47,7 @@ int progress = 0;
  */
 int getCo2PPMValue() {
   unsigned long co2PulseLength = pulseIn(PIN_CO2_IN, HIGH, 2500000);
-  float co2Percent = (co2PulseLength / 1000) / 1004.0;
+  float co2Percent = (co2PulseLength / 1000) / CO2_SENSOR_PULSE_SCALING_FACTOR;
   int co2PPM = co2Percent * CO2_SENSOR_RANGE;
 
   return co2PPM;
@@ -81,7 +82,7 @@ int bufferMicReadings(int micValue) {
   }
 
   // calculate average over buffer:
-  int sum = 0;
+  long int sum = 0;
   for (int i = 0; i < MIC_READINGS_BUFFER_SIZE; i++) {
     sum += micReadingsBuffer[i];
   }
@@ -108,7 +109,7 @@ int bufferMicLoudness(int micLoudness) {
   }
 
   // calculate average over buffer:
-  int sum = 0;
+  long int sum = 0;
   for (int i = 0; i < MIC_LOUDNESS_BUFFER_SIZE; i++) {
     sum += micLoudnessBuffer[i];
   }
